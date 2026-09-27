@@ -1,16 +1,24 @@
 // @ts-nocheck
 import { sanitizeRichText } from './utilities.js';
 
+// 27 September 2026 functional audit, section 4: every entry's `name` must actually match its
+// `hex` (the popover renders "${name} (${hex})" verbatim as both the title and aria-label — see
+// the "Text Color" swatches below). The previous list had three different entries all pointing
+// at Violet's hex (#4F17A8) under three different names — "Aqua", "PMI Navy" and "Deep Violet" —
+// so "Aqua" rendered as "Aqua (#4F17A8)", a color that has never been PMI's Aqua. Reconciled
+// against the canonical tokens in design/pmi-tokens.css / js/pmi-tokens.js and the
+// preflight-approved set in js/validation.js#PMI_BRAND_HEX_VALUES: one entry per hex, named for
+// what that hex actually is.
 export const PMI_BRAND_COLORS = [
-  { name: 'Aqua', hex: '#4F17A8' },
-  { name: 'PMI Navy', hex: '#4F17A8' },
-  { name: 'PMI Cyan', hex: '#00799E' },
+  { name: 'PMI Violet', hex: '#4F17A8' },
+  { name: 'Violet Dark', hex: '#371075' },
+  { name: 'Aqua', hex: '#00799E' },
+  { name: 'Off-Black', hex: '#200F3B' },
   { name: 'Charcoal', hex: '#100522' },
   { name: 'Muted Gray', hex: '#574E69' },
   { name: 'Alert Red', hex: '#C41E08' },
-  { name: 'Success Green', hex: '#13600C' },
-  { name: 'Warm Orange', hex: '#D5340B' },
-  { name: 'Deep Violet', hex: '#4F17A8' }
+  { name: 'Success Green', hex: '#197F10' },
+  { name: 'Warm Orange', hex: '#D5340B' }
 ];
 
 export const HIGHLIGHT_COLORS = [

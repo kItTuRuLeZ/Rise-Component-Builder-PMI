@@ -203,4 +203,21 @@ describe('createRichTextEditor UI component', () => {
     expect(FONT_SIZES.length).toBeGreaterThanOrEqual(4);
     expect(HIGHLIGHT_COLORS.length).toBeGreaterThanOrEqual(3);
   });
+
+  // 27 September 2026 functional audit, section 4: the "Text Color" popover renders
+  // `${c.name} (${c.hex})` verbatim as both the swatch title and its aria-label, so a
+  // mislabeled entry is a literal lie an assistive-technology user or sighted author both
+  // hear/read. The array previously had "Aqua", "PMI Navy" and "Deep Violet" all pointing at
+  // Violet's hex (#4F17A8) — "Aqua (#4F17A8)" was the exact defect this audit section quoted.
+  test('every brand color name matches a real, distinct PMI color (no mislabeled or duplicate swatches)', () => {
+    const hexes = PMI_BRAND_COLORS.map(c => c.hex);
+    expect(new Set(hexes).size).toBe(hexes.length); // no two entries share one hex under different names
+
+    const named = Object.fromEntries(PMI_BRAND_COLORS.map(c => [c.name, c.hex]));
+    // Canonical values from design/pmi-tokens.css / js/pmi-tokens.js.
+    expect(named['PMI Violet']).toBe('#4F17A8');
+    expect(named['Aqua']).toBe('#00799E');       // Aqua 500 — was wrongly '#4F17A8' (Violet)
+    expect(named['Success Green']).toBe('#197F10'); // --pmi-green — was wrongly '#13600C'
+    expect(named['Aqua']).not.toBe(named['PMI Violet']);
+  });
 });
