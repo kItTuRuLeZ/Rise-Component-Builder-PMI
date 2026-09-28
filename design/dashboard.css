@@ -655,9 +655,19 @@
      layer independently of them — see the AT&T edition's identical fix for the flicker this
      otherwise causes a few frames into the animation. */
   isolation: isolate;
-  background: linear-gradient(135deg, #100522 0%, #371075 25%, #4F17A8 50%, #00799E 75%, #4F17A8 100%);
-  background-size: 220% 220%;
-  animation: pmi-hero-gradient-flow 20s ease-in-out infinite;
+  /* Purely horizontal (90deg), monotonic Charcoal->Violet Dark->Violet ramp — violet family only
+     (no Aqua: an earlier version mixed Violet and Aqua directly, which blends through an
+     off-brand indigo-blue, #2848A3, confirmed by sampling the rendered gradient, and even once
+     that was buffered with Charcoal the violet-to-teal combination itself didn't read well). The
+     135deg diagonal + a dark/bright/dark/bright stop pattern also put a bright Violet "peak"
+     between two darker regions, which at this panel's wide-short aspect ratio read as a
+     hard-edged band sweeping across rather than an ambient wash — matches the AT&T edition's
+     identical fix. Animation mechanics (3-keyframe 0%->100%->0% position loop, ease timing)
+     adopted from the referenced "Pure CSS Animated Gradient Background" pen
+     (codepen.io/P1N2O/pen/pyBNzX). */
+  background: linear-gradient(90deg, #100522 0%, #371075 45%, #4F17A8 100%);
+  background-size: 300% 100%;
+  animation: pmi-hero-gradient-flow 18s ease infinite;
   border-radius: var(--pmi-radius-xl, 24px);
   padding: 36px 40px;
   color: #FFFFFF;
@@ -667,8 +677,9 @@
 }
 
 @keyframes pmi-hero-gradient-flow {
-  0%, 100% { background-position: 0% 0%; }
-  50% { background-position: 100% 100%; }
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 0%; }
+  100% { background-position: 0% 0%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1321,8 +1332,10 @@
 }
 
 [data-theme="dark"] .dashboard-hero-section {
-  background: linear-gradient(135deg, #100522 0%, #371075 25%, #4F17A8 50%, #200F3B 75%, #371075 100%) !important;
-  background-size: 220% 220% !important;
+  /* Monotonic and horizontal, matching the light-mode fix — the old dark/bright/dark/bright stop
+     pattern had a brightness peak, which read as a moving shape rather than an ambient wash. */
+  background: linear-gradient(90deg, #100522 0%, #200F3B 45%, #371075 100%) !important;
+  background-size: 300% 100% !important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
   border: 1px solid rgba(56, 189, 248, 0.2) !important;
 }
