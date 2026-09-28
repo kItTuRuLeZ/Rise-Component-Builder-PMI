@@ -650,7 +650,14 @@
 
 .dashboard-hero-section {
   position: relative;
-  background: linear-gradient(135deg, #100522 0%, #4F17A8 45%, #4F17A8 80%, #00799E 100%);
+  /* isolate: pins every descendant z-index layer (the glow ::after, any future watermark) to
+     this stacking context, so an animated background-position doesn't get its own compositing
+     layer independently of them — see the AT&T edition's identical fix for the flicker this
+     otherwise causes a few frames into the animation. */
+  isolation: isolate;
+  background: linear-gradient(135deg, #100522 0%, #371075 25%, #4F17A8 50%, #00799E 75%, #4F17A8 100%);
+  background-size: 220% 220%;
+  animation: pmi-hero-gradient-flow 20s ease-in-out infinite;
   border-radius: var(--pmi-radius-xl, 24px);
   padding: 36px 40px;
   color: #FFFFFF;
@@ -659,9 +666,21 @@
   overflow: hidden;
 }
 
+@keyframes pmi-hero-gradient-flow {
+  0%, 100% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-hero-section {
+    animation: none;
+  }
+}
+
 .dashboard-hero-section::after {
   content: "";
   position: absolute;
+  z-index: 1;
   right: -80px;
   bottom: -80px;
   width: 320px;
@@ -1302,7 +1321,8 @@
 }
 
 [data-theme="dark"] .dashboard-hero-section {
-  background: linear-gradient(135deg, #100522 0%, #4F17A8 60%, #100522 100%) !important;
+  background: linear-gradient(135deg, #100522 0%, #371075 25%, #4F17A8 50%, #200F3B 75%, #371075 100%) !important;
+  background-size: 220% 220% !important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
   border: 1px solid rgba(56, 189, 248, 0.2) !important;
 }
