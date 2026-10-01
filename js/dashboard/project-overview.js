@@ -759,7 +759,7 @@ export class ProjectOverviewView {
             <span class="inspector-label">Standards & Compatibility</span>
             <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.875rem; color: #200F3B;">
               <span>• Designed for Articulate Rise 360</span>
-              <span>• Built to support WCAG 2.2 AA requirements</span>
+              <span>• Design target: WCAG 2.2 AA (automated checks only; not an audit)</span>
               <span>• Responsive mobile/desktop layout</span>
             </div>
           </div>
@@ -1402,7 +1402,7 @@ export class ProjectOverviewView {
               </div>
               <div>
                 <strong>Accessibility Support:</strong>
-                <p style="margin: 2px 0 0 0; color: #200F3B;">Built to support WCAG 2.2 AA requirements with full keyboard navigation.</p>
+                <p style="margin: 2px 0 0 0; color: #200F3B;">Design target: WCAG 2.2 AA, with keyboard navigation. Automated checks cannot certify conformance.</p>
               </div>
             </div>
           </div>
