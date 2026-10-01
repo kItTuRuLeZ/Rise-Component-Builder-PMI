@@ -133,8 +133,8 @@ export async function generateSimulatorPreviewHTML(config) {
   <!-- Mock Rise Course Body -->
   <main class="mock-rise-canvas">
     <section class="mock-rise-hero">
-      <h1>Module 2: Network Infrastructure & Standards</h1>
-      <p>Explore operational procedures, standards compliance, and technical guidelines.</p>
+      <h1>Module 2: Project Governance & Standards</h1>
+      <p>Explore governance processes, standards compliance, and delivery guidelines.</p>
     </section>
 
     <article class="mock-rise-lesson-block">

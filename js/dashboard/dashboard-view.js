@@ -14,7 +14,42 @@ import {
 import { showPromptDialog, showConfirmDialog, isolateModal } from './pmi-modal.js';
 import { showToast } from '../toast.js';
 import { symbolPatternSvg, symbolSvg } from '../pmi-symbols.js';
+import { importProjectPackage, isProjectPackageFile } from '../project-package.js';
+import { collectMediaReferences } from '../media.js';
+import { getMediaRecord } from '../media-storage.js';
 import { pmiLogoSvg } from '../pmi-logos.js';
+
+/**
+ * Imports a project from either supported file: a `.json` (content only: media files are not in
+ * it) or a `.rise-project.zip` (content plus media). Reports what was actually restored, and names
+ * any referenced media that is not available, instead of calling a partial restore a success.
+ * @param {File} file
+ * @returns {Promise<{ project: any, message: string, level: 'success' | 'warning' }>}
+ */
+async function importProjectFromFile(file) {
+  if (isProjectPackageFile(file)) {
+    const { project, restoredMediaCount, missingMedia } = await importProjectPackage(file);
+    if (missingMedia.length) {
+      return {
+        project, level: 'warning',
+        message: `Imported “${project.name}” and restored ${restoredMediaCount} media file(s), but ${missingMedia.length} referenced file(s) were not in the package or this browser (${missingMedia.slice(0, 3).join(', ')}${missingMedia.length > 3 ? ', …' : ''}). Re-attach them in the Media Library.`
+      };
+    }
+    return { project, level: 'success', message: `Imported “${project.name}”${restoredMediaCount ? ` and restored ${restoredMediaCount} media file(s)` : ''}.` };
+  }
+  const project = importProjectJson(await file.text());
+  let missing = 0;
+  for (const reference of collectMediaReferences(project.config || project)) {
+    if (!(await getMediaRecord(reference.mediaId))?.blob) missing += 1;
+  }
+  if (missing) {
+    return {
+      project, level: 'warning',
+      message: `Imported “${project.name}”, but ${missing} media file(s) it uses are not in this browser: a JSON file holds the content, not the media files. Re-attach them in the Media Library, or import a .rise-project.zip, which includes them.`
+    };
+  }
+  return { project, level: 'success', message: `Project “${project.name}” imported successfully.` };
+}
 
 export class DashboardView {
   constructor({
@@ -588,8 +623,8 @@ export class DashboardView {
 
               ${selectedTemplate === 'import' ? `
                 <div class="form-group" style="background: var(--pmi-surface-sunken, #F7F4EF); padding: 16px; border-radius: 8px; border: 1.5px dashed var(--pmi-border, #E7E4DC); text-align: center;">
-                  <label for="np-import-file" style="display: block; font-weight: 600; font-size: 0.9375rem; margin-bottom: 8px;">Select Course Project JSON File</label>
-                  <input type="file" id="np-import-file" accept=".json" style="font-size: 0.875rem;" required />
+                  <label for="np-import-file" style="display: block; font-weight: 600; font-size: 0.9375rem; margin-bottom: 8px;">Select a project file (.json, or .rise-project.zip with media)</label>
+                  <input type="file" id="np-import-file" accept=".json,.zip,application/json,application/zip" style="font-size: 0.875rem;" required />
                 </div>
               ` : `
                 <div class="form-group">
@@ -773,13 +808,14 @@ export class DashboardView {
         const file = headerImportInput.files?.[0];
         if (!file) return;
         try {
-          const text = await file.text();
-          const imported = importProjectJson(text);
-          showToast(`Project "${imported.name}" imported successfully!`, 'success');
+          const { project: imported, message, level } = await importProjectFromFile(file);
+          showToast(message, level, level === 'success' ? undefined : 8000);
           this.render();
           if (this.onOpenProject) this.onOpenProject(imported.id);
         } catch (err) {
-          showToast(`Import failed: ${err.message}`, 'error');
+          showToast(`Import failed: ${err.message}`, 'error', 8000);
+        } finally {
+          headerImportInput.value = '';
         }
       };
     }
@@ -902,17 +938,16 @@ export class DashboardView {
             const fileInput = form.querySelector('#np-import-file');
             const file = fileInput?.files?.[0];
             if (!file) {
-              showToast('Please select a JSON project file to import.', 'error');
+              showToast('Please select a project file (.json or .rise-project.zip) to import.', 'error');
               return;
             }
             try {
-              const text = await file.text();
-              const imported = importProjectJson(text);
-              showToast(`Project "${imported.name}" imported successfully!`, 'success');
+              const { project: imported, message, level } = await importProjectFromFile(file);
+              showToast(message, level, level === 'success' ? undefined : 8000);
               closeModal();
               if (this.onOpenProject) this.onOpenProject(imported.id);
             } catch (err) {
-              showToast(`Import failed: ${err.message}`, 'error');
+              showToast(`Import failed: ${err.message}`, 'error', 8000);
             }
             return;
           }
