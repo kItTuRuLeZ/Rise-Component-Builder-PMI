@@ -77,3 +77,4 @@ Upload/
 # PMI client brand assets (licensed font files, guideline PDF/PPTX, logo/shape sources). The
 # generated, subset data derived from them (js/custom-fonts.js, fonts.css, js/pmi-*.js) is committed.
 PMI branding guidelines/
+rise-component-builder-production.zip
