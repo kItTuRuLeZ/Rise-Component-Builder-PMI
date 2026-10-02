@@ -132,7 +132,10 @@ describe('confidence matrix: diagnostic wording and results', () => {
       expect(m.text('tier-desc')).not.toMatch(BANNED);
       expect(m.text('tier-desc').length).toBeGreaterThan(40);
     }
-    expect(confidenceMatrix.generateJS(confidenceMatrix.defaultConfig, INSTANCE_ID)).not.toMatch(BANNED);
+    // The competency titles are the author's content (AT&T's defaults are engineering topics on purpose),
+    // so scan the script with neutral titles: only the component's own wording is under test.
+    const neutral = { ...confidenceMatrix.defaultConfig, items: [{ title: 'Competency one', content: 'x' }, { title: 'Competency two', content: 'y' }] };
+    expect(confidenceMatrix.generateJS(neutral, INSTANCE_ID)).not.toMatch(BANNED);
   });
 
   test('the guidance fits any competency set the author configures, because it never names the domains', () => {
