@@ -245,6 +245,15 @@
       text-align: left;
     }
 
+    /* Over a background photo the label, headline and text sit on a solid card, so they stay readable on any image.
+       Listed before the symbol rule so the symbol's reserved right-hand column still wins when both apply. */
+    .block-header.has-backing {
+      background-color: var(--bg-card);
+      border-radius: var(--pmi-radius-md, 8px);
+      padding: calc(16px * var(--spacing-scale)) calc(20px * var(--spacing-scale));
+      box-shadow: var(--pmi-shadow-1, 0 1px 2px rgba(0, 0, 0, 0.06));
+    }
+
     /* PMI symbol accent. Sits in the corner, in a column the header text is padded away from, so it
        is never behind text; sparingly sized per the PMI guidelines (a corner, not a backdrop). */
     .block-header.has-symbol { padding-right: 88px; min-height: 72px; }
@@ -684,6 +693,23 @@
       transition: width 0.3s ease;
     }
 
+    .completion-reset-btn {
+      margin-top: 12px;
+      padding: 8px 18px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--bg-card);
+      border: 1px solid var(--primary);
+      border-radius: var(--button-radius, 999px);
+      cursor: pointer;
+    }
+
+    .completion-reset-btn:hover { background: var(--primary-tint, transparent); }
+
+    .completion-reset-btn:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+
     .completion-success-message {
       margin: 12px 0 0;
       font-size: 13px;
@@ -741,6 +767,7 @@
           <div class="progress-fill" id="rcb-fixture-multiple-choice-progress-fill"></div>
         </div>
         <p id="rcb-fixture-multiple-choice-completion-message" class="completion-success-message" hidden></p>
+        
       </div>
     <div id="rcb-fixture-multiple-choice-interaction-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
   </main>
@@ -773,6 +800,13 @@
     // exactly once per completed state — see RiseComponentCompletion.notifyComplete().
     function evaluateComponentCompletion(percent) {
       if (percent < 100) return;
+      // The shared Start over button (Completion tab, "Allow learner to reset / restart"). Reloading the
+      // block returns every component to its starting state; the host keeps any completion it already has.
+      var resetBtn = document.getElementById('rcb-fixture-multiple-choice-completion-reset');
+      if (resetBtn && resetBtn.hidden) {
+        resetBtn.hidden = false;
+        resetBtn.addEventListener('click', function() { window.location.reload(); });
+      }
       if (typeof RiseComponentCompletion === 'undefined' || RiseComponentCompletion.hasCompleted()) return;
       announce(completionMessage);
       var messageEl = document.getElementById('rcb-fixture-multiple-choice-completion-message');
@@ -899,7 +933,7 @@
       });
     }
 
-    function concludeQuiz() {
+    function concludeQuiz(wasCorrect) {
       quizConcluded = true;
       document.querySelectorAll('.quiz-option, .quiz-confidence-option').forEach(function(el) {
         el.setAttribute('aria-disabled', 'true');
@@ -908,7 +942,7 @@
       var submitBtn = document.querySelector('.quiz-submit-btn');
       if (submitBtn) submitBtn.setAttribute('aria-disabled', 'true');
       var resetBtn = document.querySelector('.quiz-reset-btn');
-      if (resetBtn) resetBtn.hidden = false;
+      if (resetBtn && !wasCorrect) resetBtn.hidden = false;
     }
 
     function submitQuiz() {
@@ -947,7 +981,7 @@
           feedback.innerHTML += '<span class="quiz-feedback-explanation">' + finalExplanationHtml + '</span>';
         }
         if (hint) hint.hidden = true;
-        concludeQuiz();
+        concludeQuiz(true);
         updateTrackerComplete();
       } else if (attemptsUsed < maxAttempts) {
         var remaining = maxAttempts - attemptsUsed;

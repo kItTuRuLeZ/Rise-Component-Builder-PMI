@@ -120,7 +120,7 @@ describe('PMI brand: clickable elements use Violet (--primary), not Aqua (--acce
 
   test('hovered/selected profile card is Violet, not Aqua (the card is a clickable control)', () => {
     const css = profileCards.generateCSS();
-    expect(css).toMatch(/\.profile-card-item:hover\s*{[^}]*border-color:\s*var\(--primary\)/);
+    expect(css).toMatch(/\.profile-card-item:not\(\.is-static\):hover\s*{[^}]*border-color:\s*var\(--primary\)/);
   });
 
   test('selected info-grid card uses a Violet border, not an Aqua tint fill', () => {
