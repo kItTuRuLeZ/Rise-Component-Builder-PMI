@@ -16,7 +16,7 @@ const registry = Object.fromEntries(COMPONENT_REGISTRY.map(entry => [entry.id, {
 function compile(componentId, overrides = {}) {
   const entry = getComponentById(COMPONENT_REGISTRY, componentId);
   const config = applyThemeToConfig({
-    blockTitle: 'LABEL', blockHeadline: 'Headline', blockDesc: 'Description', blockHeadingLevel: 'h2',
+    blockTitle: 'LABEL', blockHeadline: 'Headline', blockDesc: 'Description',
     ...getDefaultConfig(entry), ...overrides
   }, theme);
   return generateIframeContent({ selectedComponent: { id: componentId }, activeTheme: theme, componentOverrides: {}, config, currentProjectId: 'p' }, registry, toRgba);
