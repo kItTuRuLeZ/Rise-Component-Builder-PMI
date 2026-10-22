@@ -23,7 +23,7 @@ import {
   downloadProjectJson, downloadZipFile, formatExportedFileSize,
   getExportedFileSize, prepareMediaExport
 } from './js/export.js';
-import { copyTextToClipboard, describeStorageUsage, escapeHTML, formatItemLabel, formatReadableDate, normalizeHeadingLevel, toRgba as colorToRgba } from './js/utilities.js';
+import { copyTextToClipboard, describeStorageUsage, escapeHTML, formatItemLabel, formatReadableDate, toRgba as colorToRgba } from './js/utilities.js';
 import { COMPLETION_MODE_WORDING, getAvailableCompletionModes, getCompletionKind, resolveCompletionMode } from './js/completion-modes.js';
 import { showToast } from './js/toast.js';
 import {
@@ -154,7 +154,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const inputBlockTitle = upgradeTextareaToRichText(document.getElementById('input-block-title'), { fieldId: 'blockTitle', isSingleLine: true })?.validationControl || document.getElementById('input-block-title');
   const inputBlockHeadline = upgradeTextareaToRichText(document.getElementById('input-block-headline'), { fieldId: 'blockHeadline', isSingleLine: true })?.validationControl || document.getElementById('input-block-headline');
   const inputBlockDesc = upgradeTextareaToRichText(document.getElementById('input-block-desc'), { fieldId: 'blockDesc', isSingleLine: false })?.validationControl || document.getElementById('input-block-desc');
-  const selectHeadingLevel = document.getElementById('select-heading-level');
   const selectHeaderStyle = document.getElementById('select-header-style');
   const selectHeaderSymbol = document.getElementById('select-header-symbol');
   const selectHeaderSymbolColor = document.getElementById('select-header-symbol-color');
@@ -1882,12 +1881,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     syncText(inputBlockDesc, 'blockDesc');
     syncText(inputCompletionMsg, 'completionMsg');
 
-    selectHeadingLevel.addEventListener('change', (e) => {
-      history.pushState(appState.config);
-      appState.config.blockHeadingLevel = e.target.value;
-      updateLivePreview();
-    });
-
     if (selectHeaderStyle) {
       selectHeaderStyle.addEventListener('change', (e) => {
         history.pushState(appState.config);
@@ -2820,8 +2813,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     inputBlockTitle.value = config.blockTitle;
     inputBlockHeadline.value = config.blockHeadline;
     inputBlockDesc.value = config.blockDesc;
-    config.blockHeadingLevel = normalizeHeadingLevel(config.blockHeadingLevel);
-    selectHeadingLevel.value = config.blockHeadingLevel;
     if (selectHeaderStyle) selectHeaderStyle.value = config.headerStyle || 'minimal';
     if (selectHeaderSymbol) selectHeaderSymbol.value = config.headerSymbol || 'auto';
     if (selectHeaderSymbolColor) selectHeaderSymbolColor.value = config.headerSymbolColor || 'aqua';
@@ -4155,7 +4146,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <summary>What do these checks cover, and what still needs a person?</summary>
           <ul>
             <li><strong>Brand &amp; typography:</strong> the approved PMI colour, type and icon tokens.</li>
-            <li><strong>Accessibility:</strong> a subset of WCAG-related rules only: accessible names, alt text, colour contrast, heading level, link text and focus outlines.</li>
+            <li><strong>Accessibility:</strong> a subset of WCAG-related rules only: accessible names, alt text, colour contrast, link text and focus outlines.</li>
             <li><strong>Rise 360 layout &amp; completion:</strong> rendered height and mobile width measured in this Builder's own preview, and completion-tracking settings.</li>
             <li><strong>Media &amp; asset budgets:</strong> file type and size limits, and missing or external files.</li>
           </ul>

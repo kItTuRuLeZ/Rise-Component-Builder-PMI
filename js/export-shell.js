@@ -3,7 +3,7 @@
 // markup/CSS/JS live in components/*.js and are composed in here — this file owns none
 // of it. See docs/EXPORT-CONTRACT.md for the full pipeline description.
 
-import { escapeAttribute, normalizeHeadingLevel } from './utilities.js';
+import { escapeAttribute } from './utilities.js';
 import { symbolSvg } from './pmi-symbols.js';
 
 // 'self' is deliberately absent from img-src/media-src: this document is loaded into a
@@ -414,14 +414,12 @@ const BOOTSTRAP_JS = `
  */
 export function renderShell({
   instanceId, tokensCSS, fontQuery, customFontFaceCSS = '', componentCSS, blockLabel, blockHeadline, blockDesc,
-  blockHeadingLevel, componentHTML, completionTrackerHTML, sharedA11yScript, componentJS, blockBackgroundImage = '',
+  componentHTML, completionTrackerHTML, sharedA11yScript, componentJS, blockBackgroundImage = '',
   headerStyle = 'minimal', headerCyanRule = false, headerSymbol = null, headerSymbolColor = 'aqua', spacingDensity = 'standard',
   contextBandEnabled = false, contextBandText = '', contextBandAlignment = 'left'
 }) {
   // Rise embeds this markup inside a lesson page that has its own h1, so the wrapping
-  // headline's tag is author-configurable (defaults to h2) rather than a hardcoded h1 —
-  // see docs/ACCESSIBILITY-CONFORMANCE.md.
-  const headingTag = normalizeHeadingLevel(blockHeadingLevel);
+  // headline is always an h2 rather than a second h1 — see docs/ACCESSIBILITY-CONFORMANCE.md.
   // Purely decorative, opt-in per component (js/editor-schemas.js's sharedComponentFields
   // "Block Background Image"). Already scheme-allowlisted by sanitizePreviewConfig
   // (js/utilities.js#sanitizeURL) before it ever reaches here; escapeAttribute is
@@ -451,7 +449,7 @@ export function renderShell({
 
   const headerHtml = (blockLabel || blockHeadline || blockDesc) ? `
     <div class="${headerClass}">${symbolHtml}${blockLabelHtml}
-      <${headingTag} class="block-headline" id="${instanceId}-block-headline">${blockHeadline}</${headingTag}>${cyanRuleHtml}${blockDescHtml}
+      <h2 class="block-headline" id="${instanceId}-block-headline">${blockHeadline}</h2>${cyanRuleHtml}${blockDescHtml}
     </div>` : '';
 
   const contextBandHtml = (contextBandEnabled && contextBandText && contextBandText.trim()) ? `
