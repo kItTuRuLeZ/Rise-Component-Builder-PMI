@@ -219,7 +219,7 @@ export class DashboardView {
               <!-- PMI logo: white on the dark hero, 40px tall (min 32px) with 1/2X clearspace (20px). -->
               <div class="hero-pmi-logo">${pmiLogoSvg({ variant: 'horizontal', tone: 'white', height: 40 })}</div>
               <div class="dashboard-hero-eyebrow">
-                <span class="hero-brand-pill">Aptara Learning Interaction Studio · PMI edition</span>
+                <span class="hero-brand-pill">Aptara Rise+ · PMI edition</span>
                 <span class="hero-compliance-pill">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                   Design target: WCAG 2.2 AA · automated brand checks
