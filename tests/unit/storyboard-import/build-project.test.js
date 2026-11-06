@@ -21,7 +21,7 @@ async function loadTemplateStoryboard() {
 // own unfilled example text.
 function filledInStoryboard() {
   return {
-    metadata: { 'Course title': 'Warehouse Safety Basics' },
+    metadata: { 'Course title': 'Warehouse Safety Basics', 'Course ID': 'WH-SAFETY-101' },
     sections: [{
       sectionId: 'S01',
       sectionTitle: 'Getting Started',
@@ -85,8 +85,8 @@ describe('buildProjectFromStoryboard: a filled-in, valid storyboard', () => {
   });
 
   test('falls back to "Imported Storyboard" when the metadata has no usable course title', () => {
-    const storyboard = { ...filledInStoryboard(), metadata: { 'Course title': '[Enter course title]' } };
-    const validation = validateStoryboard(storyboard);
+    const storyboard = { ...filledInStoryboard(), metadata: { 'Course title': '[Enter course title]', 'Course ID': 'WH-SAFETY-101' } };
+    const validation = validateStoryboard(filledInStoryboard());
     const project = buildProjectFromStoryboard(storyboard, validation);
     expect(project.name).toBe('Imported Storyboard');
   });

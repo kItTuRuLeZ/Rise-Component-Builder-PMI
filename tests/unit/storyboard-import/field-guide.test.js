@@ -183,12 +183,12 @@ describe('the shipped blank template', () => {
     expect(storyboard.sections.length).toBeGreaterThan(0);
     expect(Object.keys(mappedComponentsByBlockId).length).toBeGreaterThan(0);
     // Until the author fills it in, the placeholders are reported; nothing else is wrong with it.
-    expect(findings.filter(f => f.severity === 'fatal').map(f => f.code).sort()).toEqual(['missing-section-title', 'unknown-outline-kind']);
+    expect(findings.filter(f => f.severity === 'fatal').map(f => f.code).sort()).toEqual(['missing-course-id', 'missing-course-title', 'missing-section-title', 'unknown-outline-kind']);
   });
 });
 
 describe('the shipped macro-enabled template (.docm)', () => {
-  test('is a macro-enabled document whose body is read exactly like a .docx, with no blocking findings', async () => {
+  test('is a macro-enabled document whose body is read exactly like a .docx, with no blocking findings beyond the missing course metadata', async () => {
     const buffer = readFileSync(join(templatesDir, 'Rise_Component_Storyboard_Template.docm'));
     expect(buffer.subarray(0, 2).toString()).toBe('PK');
     expect(buffer.includes(Buffer.from('word/vbaProject.bin'))).toBe(true);
@@ -196,6 +196,6 @@ describe('the shipped macro-enabled template (.docm)', () => {
     const { findings, mappedComponentsByBlockId } = validateStoryboard(storyboard);
     expect(storyboard.sections.length).toBeGreaterThan(0);
     expect(Object.keys(mappedComponentsByBlockId).length).toBeGreaterThan(0);
-    expect(findings.filter(f => f.severity === 'fatal')).toEqual([]);
+    expect(findings.filter(f => f.severity === 'fatal').map(f => f.code).sort()).toEqual(['missing-course-id', 'missing-course-title']);
   }, 30000); // parsing a 90 KB macro document is slow when the whole suite runs in parallel
 });
